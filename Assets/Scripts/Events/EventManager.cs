@@ -15,7 +15,6 @@ public static class EventManager
     static Dictionary<EventName, List<UnityAction>> Listeners = new Dictionary<EventName, List<UnityAction>>();
     static Dictionary<EventName, List<EventInvoker>> Invokers = new Dictionary<EventName, List<EventInvoker>>();
 
-
     static List<PickUpBlock> freezerEffectInvokers = new List<PickUpBlock>();
     static UnityAction<float> freezerEffectListener;
 

@@ -8,5 +8,5 @@ public enum EventName {
     BallDiedEvent,
     LastBallLostIntEvent,
     BlockDestroyedEvent,
-    AllBlockDestroyedEvent
+    AllBlockDestroyedEvent,
 }
