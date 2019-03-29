@@ -48,7 +48,7 @@ public class LevelBuilder : IntEventInvoker {
             currentPosition.y += blockHeight;
             
         }
-
+    
         EventManager.AddListener(EventName.BlockDestroyedEvent, HandleBlockDestoryedEvent);
         unityEvents.Add(EventName.AllBlockDestroyedEvent, new AllBlockDestroyedEvent());
         EventManager.AddInvoker(EventName.AllBlockDestroyedEvent, this);
@@ -91,11 +91,11 @@ public class LevelBuilder : IntEventInvoker {
         }
     }
 
-    void HandleBlockDestoryedEvent(int num)
+    void HandleBlockDestoryedEvent()
     {
         if (blockNumber==1)
         {
-            unityEvents[EventName.AllBlockDestroyedEvent].Invoke(0);
+            unityEvents[EventName.AllBlockDestroyedEvent].Invoke();
             AudioManager.Play(AudioClipName.GameWon);
         }
         else

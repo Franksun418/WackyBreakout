@@ -3,5 +3,5 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class LastBallLostEvent : UnityEvent<int> {
+public class LastBallLostIntEvent : UnityEvent<int> {
 }

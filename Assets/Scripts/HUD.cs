@@ -14,11 +14,11 @@ public class HUD : IntEventInvoker
     // Use this for initialization
     void Start()
     {
-        EventManager.AddListener(EventName.PointsAddedEvent, HandlePointsAddedEvent);
+        EventManager.AddIntListener(EventName.PointsAddedIntEvent, HandlePointsAddedEvent);
         EventManager.AddListener(EventName.BallReducedEvent, HandleBallReducedEvent);
 
-        unityEvents.Add(EventName.LastBallLostEvent, new LastBallLostEvent());
-        EventManager.AddInvoker(EventName.LastBallLostEvent, this);
+        unityIntEvents.Add(EventName.LastBallLostIntEvent, new LastBallLostIntEvent());
+        EventManager.AddIntInvoker(EventName.LastBallLostIntEvent, this);
 
         score = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
         ballNum = GameObject.FindGameObjectWithTag("BallNumText").GetComponent<Text>();
@@ -39,11 +39,11 @@ public class HUD : IntEventInvoker
         score.text = "Score: " + points.ToString();
     }
 
-    void HandleBallReducedEvent(int num)
+    void HandleBallReducedEvent()
     {
         if (ballsLeft == 0)
         {
-            unityEvents[EventName.LastBallLostEvent].Invoke(points);
+            unityIntEvents[EventName.LastBallLostIntEvent].Invoke(points);
             AudioManager.Play(AudioClipName.GameLost);
             ballsLeft -= 1;
         }

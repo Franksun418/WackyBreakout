@@ -8,8 +8,8 @@ public class Block : IntEventInvoker {
     
 	// Use this for initialization
 	virtual protected void Start () {
-        unityEvents.Add(EventName.PointsAddedEvent, new PointsAddedEvent());
-        EventManager.AddInvoker(EventName.PointsAddedEvent, this);
+        unityIntEvents.Add(EventName.PointsAddedIntEvent, new PointsAddedEvent());
+        EventManager.AddIntInvoker(EventName.PointsAddedIntEvent, this);
 
         unityEvents.Add(EventName.BlockDestroyedEvent, new BlockDestroyedEvent());
         EventManager.AddInvoker(EventName.BlockDestroyedEvent, this);
@@ -24,8 +24,8 @@ public class Block : IntEventInvoker {
         if (coll.gameObject.CompareTag("Ball"))
         {
             Destroy(this.gameObject);
-            unityEvents[EventName.PointsAddedEvent].Invoke(worthPoints);
-            unityEvents[EventName.BlockDestroyedEvent].Invoke(0);
+            unityIntEvents[EventName.PointsAddedIntEvent].Invoke(worthPoints);
+            unityEvents[EventName.BlockDestroyedEvent].Invoke();
         }
     }
 }

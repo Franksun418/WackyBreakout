@@ -76,7 +76,7 @@ public class Ball : IntEventInvoker {
     {
         if (timerRebirth.Running)
         {
-            unityEvents[EventName.BallReducedEvent].Invoke(0);
+            unityEvents[EventName.BallReducedEvent].Invoke();
             Destroy(gameObject);
         }
     }
@@ -101,7 +101,7 @@ public class Ball : IntEventInvoker {
     }
 
     public void HandleRebrithTimerFinishedEvent() {
-        unityEvents[EventName.BallDiedEvent].Invoke(0);
+        unityEvents[EventName.BallDiedEvent].Invoke();
         Destroy(gameObject);
     }
 

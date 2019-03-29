@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum EventName {
-    PointsAddedEvent,
+    PointsAddedIntEvent,
     BallReducedEvent,
     BallDiedEvent,
-    LastBallLostEvent,
+    LastBallLostIntEvent,
     BlockDestroyedEvent,
     AllBlockDestroyedEvent
 }

@@ -80,8 +80,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   freezerSprite: {fileID: 21300000, guid: b76a7014ce01f4a4fb41917708c50aa6, type: 3}
   speedUpSprite: {fileID: 21300000, guid: 20a4adbd180254143a380dd5082492ab, type: 3}
-  IsFreezer: 1
-  IsFaster: 0
+  IsFreezer: 0
+  IsFaster: 1
   freezerEffectDuration: 1
 --- !u!212 &212360504218497536
 SpriteRenderer:
@@ -118,7 +118,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b76a7014ce01f4a4fb41917708c50aa6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 20a4adbd180254143a380dd5082492ab, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

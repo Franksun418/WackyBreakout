@@ -31,7 +31,7 @@ public class BallSpawner : MonoBehaviour {
 
         SpawnTheBall();
     }
-    void SpawnTheBall(int num=0) {
+    void SpawnTheBall() {
         if (Physics2D.OverlapArea(LeftBottomPoint, RightTopPoint) == null&&SceneManager.GetActiveScene().name=="GamePlay")
         {
             retrySpawn = false;

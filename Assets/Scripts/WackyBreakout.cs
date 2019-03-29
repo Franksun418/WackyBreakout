@@ -12,7 +12,7 @@ public class WackyBreakout : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        EventManager.AddListener(EventName.LastBallLostEvent, HandleGameLostEvent);
+        EventManager.AddIntListener(EventName.LastBallLostIntEvent, HandleGameLostEvent);
         EventManager.AddListener(EventName.AllBlockDestroyedEvent, HandleGameWonEvent);
 	}
 	
@@ -28,7 +28,7 @@ public class WackyBreakout : MonoBehaviour {
          overMessage.finalScore.text = "Your Score: " + num.ToString();
     }
 
-    public void HandleGameWonEvent(int num) {
+    public void HandleGameWonEvent() {
         var overMessage = Instantiate(gameOverMessage).GetComponent<GameOverMessage>();
         overMessage.title.text = "You Won!";
         overMessage.finalScore.text = "Your Score: " + hUD.Score.ToString();

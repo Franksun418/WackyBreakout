@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class BallReducedEvent : UnityEvent<int> {
+public class BallReducedEvent : UnityEvent {
 
 }
