@@ -12,8 +12,8 @@ public class SpeedEffectMonitor : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         speedUpTimer = gameObject.AddComponent<Timer>();
-        EventManager.AddSpeedUpEffectListener(GetSpeedEffectInfo);
-	}
+        EventManager.AddListener(EventName.SpeedUpEffectActivated, GetSpeedEffectInfo);
+    }
 
     private void Update()
     {

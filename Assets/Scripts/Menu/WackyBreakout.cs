@@ -12,7 +12,7 @@ public class WackyBreakout : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        EventManager.AddIntListener(EventName.LastBallLostIntEvent, HandleGameLostEvent);
+        EventManager.AddListener(EventName.LastBallLostIntEvent, HandleGameLostEvent);
         EventManager.AddListener(EventName.AllBlockDestroyedEvent, HandleGameWonEvent);
 	}
 	

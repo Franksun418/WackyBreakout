@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 
 public class BallSpawner : MonoBehaviour {
 
@@ -32,7 +33,7 @@ public class BallSpawner : MonoBehaviour {
         SpawnTheBall();
     }
     void SpawnTheBall() {
-        if (Physics2D.OverlapArea(LeftBottomPoint, RightTopPoint) == null&&SceneManager.GetActiveScene().name=="GamePlay")
+        if (Physics2D.OverlapArea(LeftBottomPoint, RightTopPoint) == null && SceneManager.GetActiveScene().name == "GamePlay")
         {
             retrySpawn = false;
             Instantiate(ball);

@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class LevelBuilder : IntEventInvoker {
+public class LevelBuilder : MonoBehaviour,IEventInvoker {
     [SerializeField]
     GameObject paddle;
 
@@ -18,16 +19,15 @@ public class LevelBuilder : IntEventInvoker {
     [SerializeField]
     GameObject pickUpBlock;
 
-    [SerializeField]
-    int blockNumber;
+    Dictionary<EventName, UnityEvent> unityEvents = new Dictionary<EventName, UnityEvent>();
 
     // Use this for initialization
     void Start () {
         Instantiate(paddle);
-        GameObject tempBlock = Instantiate(block);
-        float blockWidth = tempBlock.GetComponent<BoxCollider2D>().size.x * tempBlock.transform.localScale.x;
-        float blockHeight = tempBlock.GetComponent<BoxCollider2D>().size.y * tempBlock.transform.localScale.y;
-        Destroy(tempBlock);
+
+
+        float blockWidth = block.GetComponent<BoxCollider2D>().size.x * block.transform.localScale.x;
+        float blockHeight = block.GetComponent<BoxCollider2D>().size.y * block.transform.localScale.y;
 
         float screenWidth = ScreenUtils.ScreenRight - ScreenUtils.ScreenLeft;
         float blocksPerRow = screenWidth / blockWidth;
@@ -42,18 +42,18 @@ public class LevelBuilder : IntEventInvoker {
             {
                 PlaceBlock(currentPosition);
                 currentPosition.x += blockWidth;
-                blockNumber += 1;
             }
             currentPosition.x = xOffset;
             currentPosition.y += blockHeight;
             
         }
-    
+
         EventManager.AddListener(EventName.BlockDestroyedEvent, HandleBlockDestoryedEvent);
+
         unityEvents.Add(EventName.AllBlockDestroyedEvent, new AllBlockDestroyedEvent());
         EventManager.AddInvoker(EventName.AllBlockDestroyedEvent, this);
 
-	}
+    }
 
     private void Update()
     {
@@ -93,12 +93,18 @@ public class LevelBuilder : IntEventInvoker {
 
     void HandleBlockDestoryedEvent()
     {
-        if (blockNumber==1)
+        if (GameObject.FindGameObjectsWithTag("Block").Length == 1)
         {
             unityEvents[EventName.AllBlockDestroyedEvent].Invoke();
             AudioManager.Play(AudioClipName.GameWon);
         }
-        else
-        blockNumber -= 1;
+    }
+
+    public void AddListener(EventName eventName, UnityAction unityAction)
+    {
+        if (unityEvents.ContainsKey(eventName))
+        {
+            unityEvents[eventName].AddListener(unityAction);
+        }
     }
 }

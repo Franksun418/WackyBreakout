@@ -7,107 +7,132 @@ using UnityEngine.Events;
 public static class EventManager
 {
     static Dictionary<EventName, List<UnityAction<int>>> intListeners = new Dictionary<EventName, List<UnityAction<int>>>();
-    static Dictionary<EventName, List<IntEventInvoker>> intInvokers = new Dictionary<EventName, List<IntEventInvoker>>();
+    static Dictionary<EventName, List<IIntEventInvoker>> intInvokers = new Dictionary<EventName, List<IIntEventInvoker>>();
 
     static Dictionary<EventName, List<UnityAction<float>>> floatListeners = new Dictionary<EventName, List<UnityAction<float>>>();
-    static Dictionary<EventName, List<FloatEventInvoker>> floatInvokers = new Dictionary<EventName, List<FloatEventInvoker>>();
+    static Dictionary<EventName, List<IFloatEventInvoker>> floatInvokers = new Dictionary<EventName, List<IFloatEventInvoker>>();
 
     static Dictionary<EventName, List<UnityAction>> Listeners = new Dictionary<EventName, List<UnityAction>>();
-    static Dictionary<EventName, List<EventInvoker>> Invokers = new Dictionary<EventName, List<EventInvoker>>();
+    static Dictionary<EventName, List<IEventInvoker>> Invokers = new Dictionary<EventName, List<IEventInvoker>>();
 
-    static List<PickUpBlock> freezerEffectInvokers = new List<PickUpBlock>();
-    static UnityAction<float> freezerEffectListener;
+    static Dictionary<EventName, List<UnityAction<float, float>>> doubleFloatListeners = new Dictionary<EventName, List<UnityAction<float, float>>>();
+    static Dictionary<EventName, List<IDoubleFloatEventInvoker>> doubleFloatInvokers = new Dictionary<EventName, List<IDoubleFloatEventInvoker>>();
 
-    static List<PickUpBlock> speedUpEffectInvokers = new List<PickUpBlock>();
-    static List<UnityAction<float, float>> speedUpEffectListener = new List<UnityAction<float, float>>();
+    public static void Initialize()
+    {
 
-    public static void Initialize() {
         foreach (EventName eventName in Enum.GetValues(typeof(EventName)))
         {
-            string name = eventName.ToString();
-            if (name.IndexOf("Int") >= 0)
+            switch (eventName)
             {
-                if (!intInvokers.ContainsKey(eventName))
-                {
-                    intInvokers.Add(eventName, new List<IntEventInvoker>());
-                    intListeners.Add(eventName, new List<UnityAction<int>>());
-                }
-                else
-                {
-                    intInvokers[eventName].Clear();
-                    intListeners[eventName].Clear();
-                }
+                case EventName.BallDiedEvent:
+                case EventName.BallReducedEvent:
+                case EventName.AllBlockDestroyedEvent:
+                case EventName.BlockDestroyedEvent:
+                    {
+                        if (!Invokers.ContainsKey(eventName))
+                        {
+                            Invokers.Add(eventName, new List<IEventInvoker>());
+                            Listeners.Add(eventName, new List<UnityAction>());
+                        }
+                        else
+                        {
+                            Invokers[eventName].Clear();
+                            Listeners[eventName].Clear();
+                        }
+                    }
+                    break;
+
+                case EventName.LastBallLostIntEvent:
+                case EventName.PointsAddedIntEvent:
+                    {
+                        if (!intInvokers.ContainsKey(eventName))
+                        {
+                            intInvokers.Add(eventName, new List<IIntEventInvoker>());
+                            intListeners.Add(eventName, new List<UnityAction<int>>());
+                        }
+                        else
+                        {
+                            intInvokers[eventName].Clear();
+                            intListeners[eventName].Clear();
+                        }
+                    }
+                    break;
+                case EventName.FreezerEffectActivated:
+                    {
+                        if (!floatInvokers.ContainsKey(eventName))
+                        {
+                            floatInvokers.Add(eventName, new List<IFloatEventInvoker>());
+                            floatListeners.Add(eventName, new List<UnityAction<float>>());
+                        }
+                        else
+                        {
+                            floatInvokers[eventName].Clear();
+                            floatListeners[eventName].Clear();
+                        }
+                    }
+                    break;
+                case EventName.SpeedUpEffectActivated:
+                    {
+                        if (!doubleFloatInvokers.ContainsKey(eventName))
+                        {
+                            doubleFloatInvokers.Add(eventName, new List<IDoubleFloatEventInvoker>());
+                            doubleFloatListeners.Add(eventName, new List<UnityAction<float, float>>());
+                        }
+                        else
+                        {
+                            doubleFloatInvokers[eventName].Clear();
+                            doubleFloatListeners[eventName].Clear();
+                        }
+                    }
+                    break;
             }
-            else if (name.IndexOf("Float") >= 0)
-            {
-                if (!floatInvokers.ContainsKey(eventName))
-                {
-                    floatInvokers.Add(eventName, new List<FloatEventInvoker>());
-                    floatListeners.Add(eventName, new List<UnityAction<float>>());
-                }
-                else
-                {
-                    floatInvokers[eventName].Clear();
-                    floatListeners[eventName].Clear();
-                }
-            }
-            else {
-                if (!Invokers.ContainsKey(eventName))
-                {
-                    Invokers.Add(eventName, new List<EventInvoker>());
-                    Listeners.Add(eventName, new List<UnityAction>());
-                }
-                else
-                {
-                    Invokers[eventName].Clear();
-                    Listeners[eventName].Clear();
-                }
-            }
-            
         }
-        
+
     }
 
 
-    public static void AddIntInvoker(EventName eventName, IntEventInvoker invoker) {
+    public static void AddInvoker(EventName eventName, IIntEventInvoker invoker)
+    {
         intInvokers[eventName].Add(invoker);
         foreach (UnityAction<int> listener in intListeners[eventName])
         {
-			invoker.AddIntListener(eventName, listener);
-		}
+            invoker.AddListener(eventName, listener);
+        }
 
     }
 
-    public static void AddIntListener(EventName eventName, UnityAction<int> listener) {
+    public static void AddListener(EventName eventName, UnityAction<int> listener)
+    {
         intListeners[eventName].Add(listener);
-        foreach (IntEventInvoker invoker in intInvokers[eventName])
+        foreach (IIntEventInvoker invoker in intInvokers[eventName])
         {
-            invoker.AddIntListener(eventName, listener);
+            invoker.AddListener(eventName, listener);
         }
 
 
     }
 
-    public static void AddFloatInvoker(EventName eventName, FloatEventInvoker invoker)
+    public static void AddInvoker(EventName eventName, IFloatEventInvoker invoker)
     {
         foreach (UnityAction<float> listener in floatListeners[eventName])
         {
-            invoker.AddFloatEventListener(eventName, listener);
+            invoker.AddListener(eventName, listener);
         }
         floatInvokers[eventName].Add(invoker);
     }
 
-    public static void AddFloatListener(EventName eventName, UnityAction<float> listener)
+    public static void AddListener(EventName eventName, UnityAction<float> listener)
     {
-        foreach (FloatEventInvoker invoker in floatInvokers[eventName])
+        foreach (IFloatEventInvoker invoker in floatInvokers[eventName])
         {
-            invoker.AddFloatEventListener(eventName, listener);
+            invoker.AddListener(eventName, listener);
         }
         floatListeners[eventName].Add(listener);
 
     }
 
-    public static void AddInvoker(EventName eventName, EventInvoker invoker)
+    public static void AddInvoker(EventName eventName, IEventInvoker invoker)
     {
         foreach (UnityAction listener in Listeners[eventName])
         {
@@ -118,7 +143,7 @@ public static class EventManager
 
     public static void AddListener(EventName eventName, UnityAction listener)
     {
-        foreach (EventInvoker invoker in Invokers[eventName])
+        foreach (IEventInvoker invoker in Invokers[eventName])
         {
             invoker.AddListener(eventName, listener);
         }
@@ -126,53 +151,45 @@ public static class EventManager
 
     }
 
-    public static void RemoveIntInvoker(EventName eventName, IntEventInvoker intEventInvoker) {
+    public static void AddInvoker(EventName eventName, IDoubleFloatEventInvoker invoker)
+    {
+        foreach (UnityAction<float, float> listener in doubleFloatListeners[eventName])
+        {
+            invoker.AddListener(eventName, listener);
+        }
+        doubleFloatInvokers[eventName].Add(invoker);
+    }
+
+    public static void AddListener(EventName eventName, UnityAction<float, float> listener)
+    {
+        foreach (IDoubleFloatEventInvoker invoker in doubleFloatInvokers[eventName])
+        {
+            invoker.AddListener(eventName, listener);
+        }
+        doubleFloatListeners[eventName].Add(listener);
+    }
+
+
+    public static void RemoveInvoker(EventName eventName, IIntEventInvoker intEventInvoker)
+    {
         intInvokers[eventName].Remove(intEventInvoker);
     }
 
-    public static void RemoveFloatInvoker(EventName eventName, FloatEventInvoker floatEventInvoker)
+    public static void RemoveInvoker(EventName eventName, IFloatEventInvoker floatEventInvoker)
     {
         floatInvokers[eventName].Remove(floatEventInvoker);
     }
 
-    public static void RemoveInvoker(EventName eventName, EventInvoker EventInvoker)
+    public static void RemoveInvoker(EventName eventName, IEventInvoker EventInvoker)
     {
         Invokers[eventName].Remove(EventInvoker);
     }
 
-    public static void AddFreezerEffectInvoker(PickUpBlock script)
+    public static void RemoveInvoker(EventName eventName, IDoubleFloatEventInvoker EventInvoker)
     {
-        freezerEffectInvokers.Add(script);
-        script.AddFreezerEffectListener(freezerEffectListener);
+        doubleFloatInvokers[eventName].Remove(EventInvoker);
     }
 
-    public static void AddFreezerEffectListener(UnityAction<float> script)
-    {
-        freezerEffectListener = script;
-        foreach (PickUpBlock pub in freezerEffectInvokers)
-        {
-            pub.AddFreezerEffectListener(freezerEffectListener);
-        }
-    }
-
-    public static void AddSpeedUpEffectInvoker(PickUpBlock script)
-    {
-        speedUpEffectInvokers.Add(script);
-        foreach (UnityAction<float, float> listener in speedUpEffectListener)
-        {
-            script.AddSpeedUpEffectListener(listener);
-        }
-    }
-
-    public static void AddSpeedUpEffectListener(UnityAction<float, float> script)
-    {
-        speedUpEffectListener.Add(script);
-        foreach (PickUpBlock pub in speedUpEffectInvokers)
-        {
-            pub.AddSpeedUpEffectListener(script);
-        }
-
-    }
 
 
 }

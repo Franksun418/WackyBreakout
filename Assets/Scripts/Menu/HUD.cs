@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
-public class HUD : IntEventInvoker
+public class HUD : MonoBehaviour,IIntEventInvoker
 {
 
     Text score;
@@ -11,14 +12,17 @@ public class HUD : IntEventInvoker
     int points;
     int ballsLeft;
 
+    Dictionary<EventName, UnityEvent<int>> unityIntEvents = new Dictionary<EventName, UnityEvent<int>>();
+
+
     // Use this for initialization
     void Start()
     {
-        EventManager.AddIntListener(EventName.PointsAddedIntEvent, HandlePointsAddedEvent);
+        EventManager.AddListener(EventName.PointsAddedIntEvent, HandlePointsAddedEvent);
         EventManager.AddListener(EventName.BallReducedEvent, HandleBallReducedEvent);
 
         unityIntEvents.Add(EventName.LastBallLostIntEvent, new LastBallLostIntEvent());
-        EventManager.AddIntInvoker(EventName.LastBallLostIntEvent, this);
+        EventManager.AddInvoker(EventName.LastBallLostIntEvent, this);
 
         score = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
         ballNum = GameObject.FindGameObjectWithTag("BallNumText").GetComponent<Text>();
@@ -27,10 +31,12 @@ public class HUD : IntEventInvoker
         ballNum.text = "Balls Left: " + ballsLeft.ToString();
     }
 
-    // Update is called once per frame
-    void Update()
+    void IIntEventInvoker.AddListener(EventName eventName, UnityAction<int> unityAction)
     {
-
+        if (unityIntEvents.ContainsKey(eventName))
+        {
+            unityIntEvents[eventName].AddListener(unityAction);
+        }
     }
 
     void HandlePointsAddedEvent(int worthPoints)
@@ -41,7 +47,7 @@ public class HUD : IntEventInvoker
 
     void HandleBallReducedEvent()
     {
-        if (ballsLeft == 0)
+        if (ballsLeft < 1)
         {
             unityIntEvents[EventName.LastBallLostIntEvent].Invoke(points);
             AudioManager.Play(AudioClipName.GameLost);

@@ -20,7 +20,8 @@ public class Paddle : MonoBehaviour {
         boxCollider2D = this.GetComponent<BoxCollider2D>();
         halfLength = boxCollider2D.size.x/4.0f;
         timer = this.gameObject.AddComponent<Timer>();
-        EventManager.AddFreezerEffectListener(freezerThePaddle);
+
+        EventManager.AddListener(EventName.FreezerEffectActivated, (UnityAction<float>)freezerThePaddle);
 
         timer.AddTimerFinishedEventListener(HandleTimerFinishedEvent);
 

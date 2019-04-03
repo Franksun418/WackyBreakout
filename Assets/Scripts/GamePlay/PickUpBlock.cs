@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PickUpBlock : Block {
+public class PickUpBlock : Block,IFloatEventInvoker,IDoubleFloatEventInvoker {
 
     [SerializeField]
     Sprite freezerSprite;
@@ -18,10 +18,11 @@ public class PickUpBlock : Block {
 
     public float freezerEffectDuration;
 
-    FreezerEffectActivated freezerEffectActivated = new FreezerEffectActivated();
-    SpeedUpEffectActivated speedUpEffectActivated = new SpeedUpEffectActivated();
 
     PickUpEffect effect;
+
+    Dictionary<EventName, UnityEvent<float, float>> unityDoubleFloatEvents = new Dictionary<EventName, UnityEvent<float, float>>();
+    Dictionary<EventName, UnityEvent<float>> unityFloatEvents = new Dictionary<EventName, UnityEvent<float>>();
 
     // Use this for initialization
     void Start () {
@@ -32,19 +33,34 @@ public class PickUpBlock : Block {
 
         if (IsFreezer)
         {
-            EventManager.AddFreezerEffectInvoker(this);
+            unityFloatEvents.Add(EventName.FreezerEffectActivated, new FreezerEffectActivated());
+            EventManager.AddInvoker(EventName.FreezerEffectActivated, this as IFloatEventInvoker);
         }
 
         if (IsFaster)
         {
-            EventManager.AddSpeedUpEffectInvoker(this);
+            unityDoubleFloatEvents.Add(EventName.SpeedUpEffectActivated, new SpeedUpEffectActivated());
+            EventManager.AddInvoker(EventName.SpeedUpEffectActivated, this as IDoubleFloatEventInvoker);
         }
-
     }
 
-    private void Update()
+
+    public void AddListener(EventName eventName, UnityAction<float> unityAction)
     {
+        if (unityFloatEvents.ContainsKey(eventName))
+        {
+            unityFloatEvents[eventName].AddListener(unityAction);
+        }
     }
+
+    public void AddListener(EventName eventName, UnityAction<float,float> unityAction)
+    {
+        if (unityDoubleFloatEvents.ContainsKey(eventName))
+        {
+            unityDoubleFloatEvents[eventName].AddListener(unityAction);
+        }
+    }
+
 
     public PickUpEffect Effect {
         set {
@@ -67,26 +83,18 @@ public class PickUpBlock : Block {
         }
     }
 
-    public void AddFreezerEffectListener(UnityAction<float> listener) {
-        freezerEffectActivated.AddListener(listener);
-    }
-
-    public void AddSpeedUpEffectListener(UnityAction<float, float> listener)
-    {
-        speedUpEffectActivated.AddListener(listener);
-    }
 
     protected override void OnCollisionEnter2D(Collision2D coll)
     {
 
         if (IsFreezer)
         {
-            freezerEffectActivated.Invoke(freezerEffectDuration);
+            unityFloatEvents[EventName.FreezerEffectActivated].Invoke(freezerEffectDuration);
             AudioManager.Play(AudioClipName.BallHitFreezerBlock);
         }
         if (IsFaster)
         {
-            speedUpEffectActivated.Invoke(speedUpEffectDuration, speedUpFactor);
+            unityDoubleFloatEvents[EventName.SpeedUpEffectActivated].Invoke(speedUpEffectDuration, speedUpFactor);
             AudioManager.Play(AudioClipName.BallHitSpeedUpBlock);
         }
         base.OnCollisionEnter2D(coll);
